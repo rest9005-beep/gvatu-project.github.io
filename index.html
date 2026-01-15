@@ -1,3 +1,5 @@
+[file name]: index.html
+[file content begin]
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +9,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        // Инициализация EmailJS
+        emailjs.init('INcdbUzODUoHOczKG');
+    </script>
 </head>
 <body>
     <!-- Animated Background -->
@@ -372,10 +380,21 @@
                 <h2><i class="fas fa-envelope"></i> Verify Your Email</h2>
                 <p>We've sent a verification code to your email</p>
             </div>
-            <div style="margin-bottom: 25px; text-align: center;">
-                <div style="background: rgba(0, 217, 255, 0.1); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
-                    <h3 style="color: var(--primary); margin-bottom: 10px;">Verification Code Sent!</h3>
+            <div id="emailStatus" style="margin-bottom: 25px; text-align: center;">
+                <div id="emailSendingStatus" class="email-sending-status">
+                    <div class="spinner"></div>
+                    <p>Sending verification code to your email...</p>
+                </div>
+                <div id="emailSentStatus" class="email-sent-status" style="display: none;">
+                    <i class="fas fa-check-circle" style="font-size: 40px; color: var(--success); margin-bottom: 15px;"></i>
+                    <h3 style="color: var(--success); margin-bottom: 10px;">Verification Code Sent!</h3>
                     <p style="color: var(--gray); font-size: 14px;">Check your email for the 6-digit verification code</p>
+                </div>
+                <div id="emailErrorStatus" class="email-error-status" style="display: none;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 40px; color: var(--danger); margin-bottom: 15px;"></i>
+                    <h3 style="color: var(--danger); margin-bottom: 10px;">Failed to Send Email</h3>
+                    <p style="color: var(--gray); font-size: 14px;">Please check your email or try again later</p>
+                    <p style="font-size: 12px; color: var(--gray); margin-top: 10px;">Demo Code: <span id="demoCode" style="color: var(--primary); font-weight: bold;"></span></p>
                 </div>
             </div>
             <form id="verificationForm">
@@ -393,7 +412,7 @@
             <div class="form-footer">
                 <p>Didn't receive the code? <a href="#" id="resendCode">Resend code</a></p>
                 <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">
-                    Note: For demo purposes, the code is: <span id="demoCode" style="color: var(--primary); font-weight: bold;">123456</span>
+                    Note: If you don't receive the email, use this demo code: <span id="demoCodeText" style="color: var(--primary); font-weight: bold;"></span>
                 </p>
             </div>
         </div>
@@ -504,6 +523,7 @@
         const verificationCodeInput = document.getElementById('verificationCode');
         const verificationError = document.getElementById('verificationError');
         const demoCodeSpan = document.getElementById('demoCode');
+        const demoCodeText = document.getElementById('demoCodeText');
         const resendCodeLink = document.getElementById('resendCode');
         const avatarUploadBtn = document.getElementById('avatarUploadBtn');
         const avatarInput = document.getElementById('avatarInput');
@@ -531,6 +551,12 @@
         const newTopicBtn = document.getElementById('newTopicBtn');
         const navLinks = document.querySelectorAll('.nav-link');
         const deleteMessageContent = document.getElementById('deleteMessageContent');
+        
+        // Email status elements
+        const emailSendingStatus = document.getElementById('emailSendingStatus');
+        const emailSentStatus = document.getElementById('emailSentStatus');
+        const emailErrorStatus = document.getElementById('emailErrorStatus');
+        const emailStatus = document.getElementById('emailStatus');
         
         // New profile elements
         const changePasswordBtn = document.getElementById('changePasswordBtn');
@@ -675,8 +701,53 @@
         // Generate verification code
         function generateVerificationCode() {
             verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-            demoCodeSpan.textContent = verificationCode;
+            if (demoCodeSpan) demoCodeSpan.textContent = verificationCode;
+            if (demoCodeText) demoCodeText.textContent = verificationCode;
             return verificationCode;
+        }
+
+        // Send verification email via EmailJS
+        async function sendVerificationEmail(email, username, code) {
+            try {
+                // Показываем статус отправки
+                emailSendingStatus.style.display = 'block';
+                emailSentStatus.style.display = 'none';
+                emailErrorStatus.style.display = 'none';
+                
+                // Отправляем письмо через EmailJS
+                const response = await emailjs.send(
+                    'service_h6q9qkr',    // ← Ваш Service ID
+                    'template_cwtprlq',   // ← Ваш Template ID
+                    {
+                        to_email: email,
+                        username: username,
+                        code: code,
+                        to_name: username,
+                        from_name: 'FanDrot Team',
+                        reply_to: 'noreply@fandrot.com'
+                    }
+                );
+                
+                console.log('Email sent successfully:', response);
+                
+                // Показываем успешный статус
+                emailSendingStatus.style.display = 'none';
+                emailSentStatus.style.display = 'block';
+                
+                return true;
+                
+            } catch (error) {
+                console.error('Email sending failed:', error);
+                
+                // Показываем статус ошибки
+                emailSendingStatus.style.display = 'none';
+                emailErrorStatus.style.display = 'block';
+                
+                // Для демо-режима показываем код
+                showNotification('Email Error', 'Using demo code for verification. Check the code below.', 'warning');
+                
+                return false;
+            }
         }
 
         // Setup all button listeners
@@ -756,10 +827,18 @@
             messageInput.addEventListener('input', checkSpamStatus);
             
             // Resend verification code
-            resendCodeLink.addEventListener('click', (e) => {
+            resendCodeLink.addEventListener('click', async (e) => {
                 e.preventDefault();
-                generateVerificationCode();
-                showNotification('Code Resent', 'A new verification code has been generated.');
+                const code = generateVerificationCode();
+                
+                // Отправляем код на почту
+                if (pendingUser) {
+                    await sendVerificationEmail(pendingUser.email, pendingUser.username, code);
+                } else if (currentUser && currentUser.newEmail) {
+                    await sendVerificationEmail(currentUser.newEmail, currentUser.username, code);
+                }
+                
+                showNotification('Code Resent', 'A new verification code has been sent to your email.');
             });
         }
 
@@ -802,9 +881,13 @@
             if (user) {
                 // Check if email is verified
                 if (!user.emailVerified && user.role !== 'admin' && user.role !== 'moderator') {
-                    showNotification('Email not verified', 'Please verify your email address first.', 'error');
+                    showNotification('Email not verified', 'Please verify your email address first.', 'warning');
                     pendingUser = user;
                     generateVerificationCode();
+                    
+                    // Отправляем код на почту
+                    sendVerificationEmail(user.email, user.username, verificationCode);
+                    
                     showModal('verification');
                     return;
                 }
@@ -821,7 +904,7 @@
         }
 
         // Register handler
-        function handleRegister(e) {
+        async function handleRegister(e) {
             e.preventDefault();
             const username = document.getElementById('registerUsername').value;
             const email = document.getElementById('registerEmail').value;
@@ -879,8 +962,12 @@
             
             pendingUser = newUser;
             
-            // Generate and show verification code
-            generateVerificationCode();
+            // Generate verification code
+            const code = generateVerificationCode();
+            
+            // Отправляем код на почту через EmailJS
+            await sendVerificationEmail(email, username, code);
+            
             showModal('verification');
             hideModal('register');
             
@@ -1014,7 +1101,7 @@
         }
 
         // Change email handler
-        function handleChangeEmail() {
+        async function handleChangeEmail() {
             const currentPass = currentPasswordForEmail.value;
             const email = newEmail.value;
             const confirmEmail = confirmNewEmail.value;
@@ -1058,7 +1145,10 @@
             
             // Store new email temporarily and require verification
             currentUser.newEmail = email;
-            generateVerificationCode();
+            const code = generateVerificationCode();
+            
+            // Отправляем код на новую почту
+            await sendVerificationEmail(email, currentUser.username, code);
             
             // Clear fields
             currentPasswordForEmail.value = '';
@@ -1936,8 +2026,63 @@
             return 'id_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
         }
 
+        // Spam warning functions
+        function showSpamWarning(reason, waitTime) {
+            spamWarning.style.display = 'flex';
+            warningText.textContent = reason;
+            sendBtn.disabled = true;
+            
+            if (waitTime > 0) {
+                setTimeout(() => {
+                    checkSpamStatus();
+                }, waitTime);
+            }
+        }
+
+        function hideSpamWarning() {
+            spamWarning.style.display = 'none';
+            sendBtn.disabled = false;
+        }
+
         // Make functions available globally
         window.openAttachment = openAttachment;
     </script>
+    
+    <style>
+        /* Email sending status styles */
+        .email-sending-status {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .email-sent-status {
+            background: rgba(76, 217, 100, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .email-error-status {
+            background: rgba(255, 71, 87, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
 </body>
 </html>
+[file content end]
