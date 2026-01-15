@@ -118,6 +118,7 @@
                     <div class="form-group">
                         <label for="newEmail">New Email Address</label>
                         <input type="email" id="newEmail" class="form-control" placeholder="Enter new email address">
+                        <small style="color: var(--gray); margin-top: 5px; display: block;">Only @gmail.com addresses are allowed</small>
                     </div>
                     <div class="form-group">
                         <label for="confirmNewEmail">Confirm New Email</label>
@@ -341,8 +342,9 @@
                     <small style="color: var(--gray); margin-top: 5px; display: block;">This username cannot be changed later</small>
                 </div>
                 <div class="form-group">
-                    <label for="registerEmail">Email Address</label>
-                    <input type="email" id="registerEmail" class="form-control" placeholder="Enter your email" required>
+                    <label for="registerEmail">Email Address (@gmail.com only)</label>
+                    <input type="email" id="registerEmail" class="form-control" placeholder="yourname@gmail.com" required>
+                    <small style="color: var(--gray); margin-top: 5px; display: block;">We only accept @gmail.com addresses for security</small>
                 </div>
                 <div class="form-group">
                     <label for="registerPassword">Password</label>
@@ -358,6 +360,41 @@
             </form>
             <div class="form-footer">
                 <p>Already have an account? <a href="#" id="switchToLogin">Sign in here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Verification Modal -->
+    <div class="modal" id="verificationModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeVerificationModal">&times;</button>
+            <div class="modal-header">
+                <h2><i class="fas fa-envelope"></i> Verify Your Email</h2>
+                <p>We've sent a verification code to your email</p>
+            </div>
+            <div style="margin-bottom: 25px; text-align: center;">
+                <div style="background: rgba(0, 217, 255, 0.1); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 style="color: var(--primary); margin-bottom: 10px;">Verification Code Sent!</h3>
+                    <p style="color: var(--gray); font-size: 14px;">Check your email for the 6-digit verification code</p>
+                </div>
+            </div>
+            <form id="verificationForm">
+                <div class="form-group">
+                    <label for="verificationCode">Enter 6-digit Code</label>
+                    <input type="text" id="verificationCode" class="form-control" placeholder="123456" maxlength="6" required>
+                </div>
+                <div id="verificationError" style="color: var(--danger); margin-bottom: 15px; display: none;">
+                    <i class="fas fa-exclamation-circle"></i> Invalid code. Please try again.
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-check"></i> Verify Email
+                </button>
+            </form>
+            <div class="form-footer">
+                <p>Didn't receive the code? <a href="#" id="resendCode">Resend code</a></p>
+                <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">
+                    Note: For demo purposes, the code is: <span id="demoCode" style="color: var(--primary); font-weight: bold;">123456</span>
+                </p>
             </div>
         </div>
     </div>
@@ -396,32 +433,40 @@
             floodWindow: 10000,
             maxMessages: 3
         };
+        let verificationCode = null;
+        let pendingUser = null;
+
+        // Real-time updates
+        let messageUpdateInterval = null;
+        let lastMessageUpdate = 0;
 
         // Default admin and moderator accounts
         const DEFAULT_USERS = [
             {
                 id: 'admin_1',
                 username: 'admin',
-                email: 'admin@fandrot.com',
+                email: 'admin@gmail.com',
                 password: 'password123',
                 nickname: 'System Administrator',
                 bio: 'Head administrator of FanDrot',
                 avatar: 'https://ui-avatars.com/api/?name=Admin&background=9d4edd&color=ffffff&size=150&bold=true',
                 joinDate: new Date().toISOString(),
                 role: 'admin',
-                permissions: ['delete_messages', 'manage_users', 'assign_roles', 'view_admin_panel']
+                permissions: ['delete_messages', 'manage_users', 'assign_roles', 'view_admin_panel'],
+                emailVerified: true
             },
             {
                 id: 'moderator_1',
                 username: 'moderator',
-                email: 'moderator@fandrot.com',
+                email: 'moderator@gmail.com',
                 password: 'password123',
                 nickname: 'Community Moderator',
                 bio: 'FanDrot community moderator',
                 avatar: 'https://ui-avatars.com/api/?name=Moderator&background=4cc9f0&color=ffffff&size=150&bold=true',
                 joinDate: new Date().toISOString(),
                 role: 'moderator',
-                permissions: ['delete_messages']
+                permissions: ['delete_messages'],
+                emailVerified: true
             }
         ];
 
@@ -439,6 +484,7 @@
         const adminPanelLink = document.getElementById('adminPanelLink');
         const loginModal = document.getElementById('loginModal');
         const registerModal = document.getElementById('registerModal');
+        const verificationModal = document.getElementById('verificationModal');
         const deleteModal = document.getElementById('deleteModal');
         const loginBtn = document.getElementById('loginBtn');
         const registerBtn = document.getElementById('registerBtn');
@@ -446,6 +492,7 @@
         const learnMoreBtn = document.getElementById('learnMoreBtn');
         const closeLoginModal = document.getElementById('closeLoginModal');
         const closeRegisterModal = document.getElementById('closeRegisterModal');
+        const closeVerificationModal = document.getElementById('closeVerificationModal');
         const closeDeleteModal = document.getElementById('closeDeleteModal');
         const switchToRegister = document.getElementById('switchToRegister');
         const switchToLogin = document.getElementById('switchToLogin');
@@ -453,6 +500,11 @@
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
         const loginForm = document.getElementById('loginForm');
         const registerForm = document.getElementById('registerForm');
+        const verificationForm = document.getElementById('verificationForm');
+        const verificationCodeInput = document.getElementById('verificationCode');
+        const verificationError = document.getElementById('verificationError');
+        const demoCodeSpan = document.getElementById('demoCode');
+        const resendCodeLink = document.getElementById('resendCode');
         const avatarUploadBtn = document.getElementById('avatarUploadBtn');
         const avatarInput = document.getElementById('avatarInput');
         const avatarImg = document.getElementById('avatarImg');
@@ -540,6 +592,9 @@
             // Setup all button listeners
             setupAllButtonListeners();
             
+            // Start real-time updates
+            startRealTimeUpdates();
+            
             // Show welcome message
             setTimeout(() => {
                 if (!currentUser) {
@@ -547,6 +602,61 @@
                 }
             }, 1000);
         });
+
+        // Real-time updates for chat
+        function startRealTimeUpdates() {
+            // Check for new messages every 2 seconds
+            messageUpdateInterval = setInterval(() => {
+                if (forumSection.classList.contains('active') || 
+                    (adminPanelSection.classList.contains('active') && currentUser && currentUser.role === 'admin')) {
+                    checkForNewMessages();
+                }
+            }, 2000);
+            
+            // Listen for storage events (for other tabs)
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'fandrot_messages' || e.key === 'fandrot_deleted_messages') {
+                    if (forumSection.classList.contains('active')) {
+                        const currentTab = document.querySelector('.tab.active').dataset.tab;
+                        loadMessages(currentTab);
+                    }
+                    if (adminPanelSection.classList.contains('active') && currentUser && currentUser.role === 'admin') {
+                        updateAdminStats();
+                        loadDeletedMessages();
+                    }
+                }
+                if (e.key === 'fandrot_users') {
+                    if (adminPanelSection.classList.contains('active') && currentUser && currentUser.role === 'admin') {
+                        updateAdminStats();
+                        loadUsersList();
+                    }
+                    // Update current user if it was modified in another tab
+                    const newUsers = JSON.parse(localStorage.getItem('fandrot_users')) || [];
+                    if (currentUser) {
+                        const updatedUser = newUsers.find(u => u.id === currentUser.id);
+                        if (updatedUser) {
+                            currentUser = updatedUser;
+                            localStorage.setItem('fandrot_currentUser', JSON.stringify(currentUser));
+                            if (profileSection.classList.contains('active')) {
+                                loadProfileData();
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function checkForNewMessages() {
+            // Check if messages have been updated
+            const currentMessages = JSON.parse(localStorage.getItem('fandrot_messages')) || [];
+            if (currentMessages.length > messages.length) {
+                messages = currentMessages;
+                if (forumSection.classList.contains('active')) {
+                    const currentTab = document.querySelector('.tab.active').dataset.tab;
+                    loadMessages(currentTab);
+                }
+            }
+        }
 
         // Create floating dots for background
         function createFloatingDots() {
@@ -562,6 +672,13 @@
             }
         }
 
+        // Generate verification code
+        function generateVerificationCode() {
+            verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+            demoCodeSpan.textContent = verificationCode;
+            return verificationCode;
+        }
+
         // Setup all button listeners
         function setupAllButtonListeners() {
             // Modal controls
@@ -575,6 +692,7 @@
             // Close modals
             closeLoginModal.addEventListener('click', () => hideModal('login'));
             closeRegisterModal.addEventListener('click', () => hideModal('register'));
+            closeVerificationModal.addEventListener('click', () => hideModal('verification'));
             closeDeleteModal.addEventListener('click', () => hideModal('delete'));
             cancelDeleteBtn.addEventListener('click', () => hideModal('delete'));
             
@@ -603,6 +721,7 @@
             // Form submissions
             loginForm.addEventListener('submit', handleLogin);
             registerForm.addEventListener('submit', handleRegister);
+            verificationForm.addEventListener('submit', handleVerification);
             messageForm.addEventListener('submit', handleMessageSubmit);
             confirmDeleteBtn.addEventListener('click', handleDeleteMessage);
             
@@ -635,6 +754,13 @@
             
             // Real-time message input monitoring
             messageInput.addEventListener('input', checkSpamStatus);
+            
+            // Resend verification code
+            resendCodeLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                generateVerificationCode();
+                showNotification('Code Resent', 'A new verification code has been generated.');
+            });
         }
 
         // Show/hide modal
@@ -643,6 +769,8 @@
                 loginModal.classList.add('active');
             } else if (modal === 'register') {
                 registerModal.classList.add('active');
+            } else if (modal === 'verification') {
+                verificationModal.classList.add('active');
             } else if (modal === 'delete') {
                 deleteModal.classList.add('active');
             }
@@ -653,6 +781,10 @@
                 loginModal.classList.remove('active');
             } else if (modal === 'register') {
                 registerModal.classList.remove('active');
+            } else if (modal === 'verification') {
+                verificationModal.classList.remove('active');
+                verificationError.style.display = 'none';
+                verificationCodeInput.value = '';
             } else if (modal === 'delete') {
                 deleteModal.classList.remove('active');
                 messageToDelete = null;
@@ -668,6 +800,15 @@
             const user = users.find(u => u.username === username && u.password === password);
             
             if (user) {
+                // Check if email is verified
+                if (!user.emailVerified && user.role !== 'admin' && user.role !== 'moderator') {
+                    showNotification('Email not verified', 'Please verify your email address first.', 'error');
+                    pendingUser = user;
+                    generateVerificationCode();
+                    showModal('verification');
+                    return;
+                }
+                
                 currentUser = user;
                 localStorage.setItem('fandrot_currentUser', JSON.stringify(user));
                 updateUIForUser();
@@ -703,6 +844,12 @@
                 return;
             }
             
+            // Check if email ends with @gmail.com
+            if (!email.endsWith('@gmail.com')) {
+                showNotification('Registration failed', 'Only @gmail.com email addresses are allowed', 'error');
+                return;
+            }
+            
             const usernameExists = users.some(u => u.username === username);
             if (usernameExists) {
                 showNotification('Registration failed', 'Username already taken', 'error');
@@ -726,19 +873,65 @@
                 avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=0099ff&color=ffffff&size=150&bold=true`,
                 joinDate: new Date().toISOString(),
                 role: 'user',
-                permissions: []
+                permissions: [],
+                emailVerified: false
             };
             
-            users.push(newUser);
-            localStorage.setItem('fandrot_users', JSON.stringify(users));
+            pendingUser = newUser;
             
-            currentUser = newUser;
-            localStorage.setItem('fandrot_currentUser', JSON.stringify(newUser));
-            
-            updateUIForUser();
+            // Generate and show verification code
+            generateVerificationCode();
+            showModal('verification');
             hideModal('register');
-            showSection('forum');
-            showNotification('Account created!', 'Welcome to FanDrot community');
+            
+            showNotification('Registration successful', 'Please verify your email address to continue.');
+        }
+
+        // Handle email verification
+        function handleVerification(e) {
+            e.preventDefault();
+            const enteredCode = verificationCodeInput.value;
+            
+            if (enteredCode === verificationCode) {
+                // Code is correct
+                if (pendingUser) {
+                    // This is for registration
+                    pendingUser.emailVerified = true;
+                    users.push(pendingUser);
+                    localStorage.setItem('fandrot_users', JSON.stringify(users));
+                    
+                    currentUser = pendingUser;
+                    localStorage.setItem('fandrot_currentUser', JSON.stringify(currentUser));
+                    
+                    updateUIForUser();
+                    hideModal('verification');
+                    showSection('forum');
+                    showNotification('Email verified!', 'Welcome to FanDrot community');
+                    
+                    pendingUser = null;
+                } else if (currentUser && currentUser.newEmail) {
+                    // This is for email change
+                    currentUser.email = currentUser.newEmail;
+                    delete currentUser.newEmail;
+                    currentUser.emailVerified = true;
+                    
+                    const userIndex = users.findIndex(u => u.id === currentUser.id);
+                    if (userIndex !== -1) {
+                        users[userIndex] = currentUser;
+                    }
+                    
+                    localStorage.setItem('fandrot_users', JSON.stringify(users));
+                    localStorage.setItem('fandrot_currentUser', JSON.stringify(currentUser));
+                    
+                    hideModal('verification');
+                    loadProfileData();
+                    showNotification('Email verified', 'Your email address has been updated successfully.');
+                }
+            } else {
+                // Code is incorrect
+                verificationError.style.display = 'block';
+                verificationCodeInput.style.borderColor = 'var(--danger)';
+            }
         }
 
         // Avatar upload
@@ -843,6 +1036,12 @@
                 return;
             }
             
+            // Check if email ends with @gmail.com
+            if (!email.endsWith('@gmail.com')) {
+                showNotification('Error', 'Only @gmail.com email addresses are allowed', 'error');
+                return;
+            }
+            
             // Validate email format
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
@@ -857,18 +1056,18 @@
                 return;
             }
             
-            // Update email
-            currentUser.email = email;
-            userEmail.textContent = email;
-            localStorage.setItem('fandrot_currentUser', JSON.stringify(currentUser));
-            updateUsersStorage();
+            // Store new email temporarily and require verification
+            currentUser.newEmail = email;
+            generateVerificationCode();
             
             // Clear fields
             currentPasswordForEmail.value = '';
             newEmail.value = '';
             confirmNewEmail.value = '';
             
-            showNotification('Email Changed', 'Your email address has been updated successfully');
+            // Show verification modal
+            showModal('verification');
+            showNotification('Email change initiated', 'Please verify your new email address.');
         }
 
         // Check password strength
@@ -931,6 +1130,13 @@
                 return;
             }
             
+            // Check if email is verified (for regular users)
+            if (currentUser.role === 'user' && !currentUser.emailVerified) {
+                showNotification('Email not verified', 'Please verify your email address to send messages.', 'error');
+                showModal('verification');
+                return;
+            }
+            
             const spamCheck = checkSpam();
             if (!spamCheck.allowed) {
                 showSpamWarning(spamCheck.reason, spamCheck.waitTime);
@@ -971,20 +1177,20 @@
             filesToUpload = [];
             hideSpamWarning();
             
-            // Add to UI
-            addMessageToUI(message);
+            // Add to UI immediately (real-time)
+            addMessageToUI(message, true);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
             
             // Show sending animation
             sendBtn.innerHTML = '<i class="fas fa-lock"></i> Encrypting...';
             sendBtn.disabled = true;
             
-            // Simulate encryption delay
+            // Simulate encryption delay (very short for real-time feel)
             setTimeout(() => {
                 sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
                 sendBtn.disabled = false;
                 showNotification('Message sent', 'Your encrypted message has been posted');
-            }, 500);
+            }, 300);
         }
 
         // Check spam status
@@ -1173,6 +1379,16 @@
                 roleBadge.className = 'role-badge role-user';
                 roleBadge.innerHTML = '<i class="fas fa-user"></i> User';
             }
+            
+            // Add email verification badge
+            if (currentUser.role === 'user' && !currentUser.emailVerified) {
+                const warningBadge = document.createElement('span');
+                warningBadge.className = 'role-badge';
+                warningBadge.style.background = 'var(--warning)';
+                warningBadge.style.marginLeft = '10px';
+                warningBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Email not verified';
+                roleBadge.parentNode.insertBefore(warningBadge, roleBadge.nextSibling);
+            }
         }
 
         function loadProfileData() {
@@ -1260,15 +1476,25 @@
                     </div>
                 `;
             } else {
-                filteredMessages.forEach(message => addMessageToUI(message));
+                filteredMessages.forEach(message => addMessageToUI(message, false));
             }
             
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            // Scroll to bottom
+            setTimeout(() => {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 100);
         }
 
-        function addMessageToUI(message) {
+        function addMessageToUI(message, isNew = false) {
+            // Check if message already exists in DOM
+            const existingMessage = document.querySelector(`[data-message-id="${message.id}"]`);
+            if (existingMessage && !isNew) return;
+            
             const messageEl = document.createElement('div');
             messageEl.className = 'message';
+            if (isNew) {
+                messageEl.style.animation = 'slideIn 0.3s ease';
+            }
             messageEl.dataset.messageId = message.id;
             
             if (message.deleted) {
@@ -1429,6 +1655,10 @@
                     roleIcon = 'fa-shield-alt';
                 }
                 
+                const emailVerifiedBadge = user.emailVerified ? 
+                    '<span style="color: var(--success); font-size: 12px;"><i class="fas fa-check-circle"></i> Verified</span>' : 
+                    '<span style="color: var(--warning); font-size: 12px;"><i class="fas fa-exclamation-circle"></i> Unverified</span>';
+                
                 const roleOptions = `
                     <option value="user" ${user.role === 'user' ? 'selected' : ''}>User</option>
                     <option value="moderator" ${user.role === 'moderator' ? 'selected' : ''}>Moderator</option>
@@ -1449,12 +1679,18 @@
                     <div class="user-details">
                         <p style="color: var(--gray); font-size: 13px; margin-bottom: 10px;">
                             <i class="fas fa-envelope"></i> ${user.email}<br>
+                            ${emailVerifiedBadge}<br>
                             <i class="fas fa-calendar"></i> Joined ${new Date(user.joinDate).toLocaleDateString()}
                         </p>
                         ${currentUser.id !== user.id ? `
                             <select class="role-select" data-user-id="${user.id}">
                                 ${roleOptions}
                             </select>
+                            <div style="margin-bottom: 10px;">
+                                <button class="btn btn-warning btn-small verify-email-btn" data-user-id="${user.id}" ${user.emailVerified ? 'disabled' : ''} style="width: 100%;">
+                                    <i class="fas fa-envelope"></i> ${user.emailVerified ? 'Email Verified' : 'Verify Email'}
+                                </button>
+                            </div>
                             <div class="user-actions">
                                 <button class="btn btn-danger btn-small delete-user-btn" data-user-id="${user.id}" ${user.role === 'admin' ? 'disabled' : ''}>
                                     <i class="fas fa-trash"></i> Delete User
@@ -1471,6 +1707,12 @@
                     const roleSelect = userCard.querySelector('.role-select');
                     roleSelect.addEventListener('change', (e) => {
                         updateUserRole(user.id, e.target.value);
+                    });
+                    
+                    // Add verify email listener
+                    const verifyBtn = userCard.querySelector('.verify-email-btn');
+                    verifyBtn.addEventListener('click', () => {
+                        verifyUserEmail(user.id);
                     });
                     
                     // Add delete user listener
@@ -1517,6 +1759,24 @@
             
             updateAdminStats();
             showNotification('Role Updated', `${users[userIndex].username} is now a ${newRole}`);
+        }
+
+        function verifyUserEmail(userId) {
+            const userIndex = users.findIndex(u => u.id === userId);
+            if (userIndex === -1) return;
+            
+            users[userIndex].emailVerified = true;
+            localStorage.setItem('fandrot_users', JSON.stringify(users));
+            
+            // If the verified user is the current user, update the UI
+            if (userId === currentUser.id) {
+                currentUser.emailVerified = true;
+                localStorage.setItem('fandrot_currentUser', JSON.stringify(currentUser));
+                updateUIForUser();
+            }
+            
+            loadUsersList();
+            showNotification('Email Verified', `${users[userIndex].username}'s email has been verified`);
         }
 
         function deleteUser(userId) {
