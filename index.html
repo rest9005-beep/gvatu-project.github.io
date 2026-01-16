@@ -379,21 +379,16 @@
                     <div class="spinner"></div>
                     <p>Sending verification code to your email...</p>
                 </div>
-                <div id="emailSentStatus" class="email-sent-status">
+                <div id="emailSentStatus" class="email-sent-status" style="display: none;">
                     <i class="fas fa-check-circle" style="font-size: 40px; color: var(--success); margin-bottom: 15px;"></i>
-                    <h3 style="color: var(--success); margin-bottom: 10px;">Verification Code Ready!</h3>
-                    <p style="color: var(--gray); font-size: 14px;">Check the code below or use the demo code</p>
+                    <h3 style="color: var(--success); margin-bottom: 10px;">Verification Code Sent!</h3>
+                    <p style="color: var(--gray); font-size: 14px;">Check your email for the 6-digit verification code</p>
                 </div>
                 <div id="emailErrorStatus" class="email-error-status" style="display: none;">
                     <i class="fas fa-exclamation-triangle" style="font-size: 40px; color: var(--danger); margin-bottom: 15px;"></i>
-                    <h3 style="color: var(--danger); margin-bottom: 10px;">Email Sending Disabled</h3>
-                    <p style="color: var(--gray); font-size: 14px;">Using demo mode. In production, enable Web3Forms</p>
+                    <h3 style="color: var(--danger); margin-bottom: 10px;">Failed to Send Email</h3>
+                    <p style="color: var(--gray); font-size: 14px;">Please check your email or try again later</p>
                 </div>
-            </div>
-            <div style="background: rgba(0, 153, 255, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
-                <p style="margin-bottom: 10px; color: var(--gray);">Demo Verification Code:</p>
-                <div style="font-size: 32px; font-weight: bold; color: var(--primary); letter-spacing: 5px;" id="displayCode">123456</div>
-                <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">Enter this code below</p>
             </div>
             <form id="verificationForm">
                 <div class="form-group">
@@ -409,9 +404,6 @@
             </form>
             <div class="form-footer">
                 <p>Didn't receive the code? <a href="#" id="resendCode">Resend code</a></p>
-                <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">
-                    Note: In demo mode, the code is shown above. For production, set up Web3Forms.
-                </p>
             </div>
         </div>
     </div>
@@ -453,9 +445,8 @@
 
     <script>
         // Web3Forms Configuration
-        const WEB3FORMS_ENABLED = true; // Set to false to use demo mode
-        const WEB3FORMS_ACCESS_KEY = '49120607-b034-407c-8bd2-5926117fb0d8';
         const WEB3FORMS_URL = 'https://api.web3forms.com/submit';
+        const WEB3FORMS_ACCESS_KEY = '49120607-b034-407c-8bd2-5926117fb0d8';
 
         // State Management
         let currentUser = null;
@@ -540,7 +531,6 @@
         const verificationForm = document.getElementById('verificationForm');
         const verificationCodeInput = document.getElementById('verificationCode');
         const verificationError = document.getElementById('verificationError');
-        const displayCodeElement = document.getElementById('displayCode');
         const resendCodeLink = document.getElementById('resendCode');
         const avatarUploadBtn = document.getElementById('avatarUploadBtn');
         const avatarInput = document.getElementById('avatarInput');
@@ -579,7 +569,6 @@
         const emailSendingStatus = document.getElementById('emailSendingStatus');
         const emailSentStatus = document.getElementById('emailSentStatus');
         const emailErrorStatus = document.getElementById('emailErrorStatus');
-        const emailStatus = document.getElementById('emailStatus');
         
         // Profile elements
         const changePasswordBtn = document.getElementById('changePasswordBtn');
@@ -650,22 +639,7 @@
                     showNotification('Welcome to FanDrot', 'Join our encrypted community today!');
                 }
             }, 1000);
-            
-            // Update email status UI based on Web3Forms availability
-            updateEmailStatusUI();
         });
-
-        // Update email status UI based on Web3Forms configuration
-        function updateEmailStatusUI() {
-            if (!WEB3FORMS_ENABLED) {
-                emailSendingStatus.style.display = 'none';
-                emailSentStatus.style.display = 'block';
-                emailErrorStatus.style.display = 'none';
-                showNotification('Demo Mode', 'Email sending is in demo mode. Set WEB3FORMS_ENABLED to true for real emails.', 'warning');
-            } else {
-                showNotification('Web3Forms Active', 'Real email sending is enabled with your access key.', 'success');
-            }
-        }
 
         // Real-time updates for chat
         function startRealTimeUpdates() {
@@ -739,7 +713,6 @@
         // Generate verification code
         function generateVerificationCode() {
             verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-            if (displayCodeElement) displayCodeElement.textContent = verificationCode;
             return verificationCode;
         }
 
@@ -750,18 +723,6 @@
                 emailSendingStatus.style.display = 'block';
                 emailSentStatus.style.display = 'none';
                 emailErrorStatus.style.display = 'none';
-                
-                if (!WEB3FORMS_ENABLED) {
-                    // Demo mode - just show the code
-                    setTimeout(() => {
-                        emailSendingStatus.style.display = 'none';
-                        emailSentStatus.style.display = 'block';
-                        emailErrorStatus.style.display = 'none';
-                    }, 1500);
-                    
-                    showNotification('Demo Mode', 'Using demo verification code. Set WEB3FORMS_ENABLED to true for real emails.', 'info');
-                    return true;
-                }
                 
                 // Set form values
                 web3formsName.value = username;
@@ -791,7 +752,6 @@
                         emailSentStatus.style.display = 'block';
                     }, 1000);
                     
-                    showNotification('Email Sent', 'Verification code has been sent to your email.', 'success');
                     return true;
                 } else {
                     throw new Error(result.message || 'Failed to send email');
@@ -800,18 +760,9 @@
             } catch (error) {
                 console.error('Email sending failed:', error);
                 
-                // Show error status but continue in demo mode
+                // Show error status
                 emailSendingStatus.style.display = 'none';
                 emailErrorStatus.style.display = 'block';
-                
-                // Show notification
-                showNotification('Email Error', 'Failed to send email. Using demo code instead.', 'warning');
-                
-                // Fall back to demo mode
-                setTimeout(() => {
-                    emailErrorStatus.style.display = 'none';
-                    emailSentStatus.style.display = 'block';
-                }, 2000);
                 
                 return false;
             }
@@ -907,7 +858,7 @@
                     await sendVerificationEmail(currentUser.newEmail, currentUser.username, code);
                 }
                 
-                showNotification('Code Resent', 'A new verification code has been generated.');
+                showNotification('Code Resent', 'A new verification code has been sent to your email.');
             });
         }
 
@@ -919,8 +870,10 @@
                 registerModal.classList.add('active');
             } else if (modal === 'verification') {
                 verificationModal.classList.add('active');
-                // Generate code when modal opens
-                generateVerificationCode();
+                // Show sending status immediately
+                emailSendingStatus.style.display = 'block';
+                emailSentStatus.style.display = 'none';
+                emailErrorStatus.style.display = 'none';
             } else if (modal === 'delete') {
                 deleteModal.classList.add('active');
             }
@@ -937,6 +890,10 @@
                 verificationModal.classList.remove('active');
                 verificationError.style.display = 'none';
                 verificationCodeInput.value = '';
+                // Reset email status
+                emailSendingStatus.style.display = 'none';
+                emailSentStatus.style.display = 'none';
+                emailErrorStatus.style.display = 'none';
             } else if (modal === 'delete') {
                 deleteModal.classList.remove('active');
                 messageToDelete = null;
@@ -958,7 +915,9 @@
                     pendingUser = user;
                     generateVerificationCode();
                     
-                    // Show verification modal
+                    // Send verification email
+                    sendVerificationEmail(user.email, user.username, verificationCode);
+                    
                     showModal('verification');
                     return;
                 }
@@ -2208,4 +2167,3 @@
     </style>
 </body>
 </html>
-[file content end]
