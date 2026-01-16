@@ -1,5 +1,3 @@
-[file name]: index.html
-[file content begin]
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -434,12 +432,12 @@
         <input type="hidden" name="subject" value="FanDrot Verification Code">
         <input type="hidden" name="from_name" value="FanDrot">
         <input type="hidden" name="botcheck" value="">
-        <input type="hidden" name="replyto" value="">
+        <!-- Важно: указываем replyto как email пользователя -->
         <input type="hidden" name="redirect" value="false">
         
         <!-- Dynamic fields will be set by JavaScript -->
         <input type="hidden" name="name" id="web3forms-name">
-        <input type="hidden" name="email" id="web3forms-email">
+        <input type="hidden" name="email" id="web3forms-email"> <!-- Это будет email пользователя -->
         <input type="hidden" name="message" id="web3forms-message">
     </form>
 
@@ -716,7 +714,7 @@
             return verificationCode;
         }
 
-        // Send verification email via Web3Forms
+        // Send verification email via Web3Forms - ИСПРАВЛЕННАЯ ВЕРСИЯ
         async function sendVerificationEmail(email, username, code) {
             try {
                 // Show sending status
@@ -724,13 +722,17 @@
                 emailSentStatus.style.display = 'none';
                 emailErrorStatus.style.display = 'none';
                 
-                // Set form values
+                // Set form values - ВАЖНО: email пользователя идет в поле 'email'
                 web3formsName.value = username;
-                web3formsEmail.value = email;
+                web3formsEmail.value = email; // Это email ПОЛУЧАТЕЛЯ
                 web3formsMessage.value = `Hello ${username}!\n\nYour FanDrot verification code is: ${code}\n\nPlease enter this code in the verification window to complete your registration.\n\nThis code will expire in 10 minutes.\n\nIf you didn't request this code, please ignore this email.\n\nBest regards,\nFanDrot Team`;
                 
                 // Create form data
                 const formData = new FormData(web3formsForm);
+                
+                // Добавляем дополнительные параметры для правильной отправки
+                formData.append('to_email', email); // Отправляем на email пользователя
+                formData.append('reply_to', email); // Ответить на email пользователя
                 
                 // Send using Web3Forms API
                 const response = await fetch(WEB3FORMS_URL, {
@@ -752,6 +754,7 @@
                         emailSentStatus.style.display = 'block';
                     }, 1000);
                     
+                    showNotification('Email Sent', 'Verification code has been sent to your email.', 'success');
                     return true;
                 } else {
                     throw new Error(result.message || 'Failed to send email');
@@ -763,6 +766,9 @@
                 // Show error status
                 emailSendingStatus.style.display = 'none';
                 emailErrorStatus.style.display = 'block';
+                
+                // Show notification
+                showNotification('Email Error', 'Failed to send email. Please try again.', 'error');
                 
                 return false;
             }
