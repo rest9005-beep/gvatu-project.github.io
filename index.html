@@ -1244,6 +1244,44 @@
             background: rgba(0, 0, 0, 0.2);
             border-radius: 5px;
         }
+
+        .telegram-input-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .telegram-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+        }
+
+        .telegram-step {
+            background: rgba(0, 136, 204, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #0088cc;
+        }
+
+        .telegram-step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background: #0088cc;
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -1610,42 +1648,65 @@
                 <h2><i class="fab fa-telegram"></i> Telegram Verification</h2>
                 <p>Connect your Telegram account to verify</p>
             </div>
-            <div id="telegramVerificationStatus">
-                <div id="telegramVerificationSending" class="telegram-sending-status" style="display: none;">
+            
+            <div id="telegramVerificationSteps">
+                <div class="telegram-step">
+                    <div class="telegram-step-number">1</div>
+                    <strong>Start our Telegram bot</strong>
+                    <p>Click the button below to open our verification bot:</p>
+                    <a href="https://t.me/FanDrotVerificationBot" target="_blank" class="btn btn-telegram" style="width: 100%; margin-top: 10px;">
+                        <i class="fab fa-telegram"></i> Open @FanDrotVerificationBot
+                    </a>
+                </div>
+                
+                <div class="telegram-step">
+                    <div class="telegram-step-number">2</div>
+                    <strong>Get your Telegram User ID</strong>
+                    <p>Send <code>/start</code> or <code>/id</code> to the bot to get your Telegram User ID</p>
+                    <div class="telegram-input-group">
+                        <input type="text" id="telegramUserId" class="telegram-input" placeholder="Paste your Telegram User ID here">
+                        <button class="btn btn-primary" id="verifyTelegramIdBtn">
+                            <i class="fas fa-check"></i> Verify
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="telegram-step">
+                    <div class="telegram-step-number">3</div>
+                    <strong>Get verification code from bot</strong>
+                    <p>Send <code>/getcode</code> to receive a verification code</p>
+                    <div class="telegram-input-group">
+                        <input type="text" id="telegramVerificationCode" class="telegram-input" placeholder="Enter verification code from bot">
+                        <button class="btn btn-primary" id="verifyCodeBtn">
+                            <i class="fas fa-check"></i> Verify Code
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="telegramVerificationStatus" style="display: none;">
+                <div id="telegramVerificationSending" class="telegram-sending-status">
                     <div class="spinner"></div>
-                    <p>Generating verification code...</p>
+                    <p>Verifying your Telegram account...</p>
                 </div>
                 <div id="telegramVerificationSuccess" class="telegram-success-status" style="display: none;">
                     <i class="fab fa-telegram" style="font-size: 48px; color: #0088cc; margin-bottom: 15px;"></i>
-                    <h3 style="color: #0088cc; margin-bottom: 10px;">Verification Code Generated!</h3>
-                    <div class="verification-code-box">
-                        <p>Send this code to our Telegram bot:</p>
-                        <div class="verification-code" id="telegramVerificationCode">000000</div>
-                        <p>1. Open <a href="https://t.me/FanDrotVerificationBot" target="_blank">@FanDrotVerificationBot</a></p>
-                        <p>2. Send: <strong>/verify</strong> <span id="telegramCodeToSend">000000</span></p>
-                    </div>
+                    <h3 style="color: #0088cc; margin-bottom: 10px;">Telegram Verified!</h3>
+                    <p style="color: var(--gray); font-size: 14px;">Your Telegram account has been successfully verified.</p>
+                    <p style="color: var(--gray); font-size: 12px;">Telegram User ID: <span id="verifiedTelegramId"></span></p>
                 </div>
                 <div id="telegramVerificationError" class="telegram-error-status" style="display: none;">
                     <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: var(--danger); margin-bottom: 15px;"></i>
-                    <h3 style="color: var(--danger); margin-bottom: 10px;">Connection Failed</h3>
-                    <p style="color: var(--gray); font-size: 14px;">Please try again or contact support</p>
+                    <h3 style="color: var(--danger); margin-bottom: 10px;">Verification Failed</h3>
+                    <p style="color: var(--gray); font-size: 14px;" id="verificationErrorMsg"></p>
                 </div>
             </div>
-            <div id="telegramVerificationInstructions" style="margin-bottom: 25px; text-align: center;">
-                <div style="background: rgba(0, 136, 204, 0.1); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
-                    <h4 style="color: #0088cc; margin-bottom: 10px;">How to verify:</h4>
-                    <ol style="text-align: left; padding-left: 20px; color: var(--gray);">
-                        <li>Click the button below to open Telegram</li>
-                        <li>Send the verification code to the bot</li>
-                        <li>Return here and wait for confirmation</li>
-                    </ol>
-                </div>
-                <a href="https://t.me/FanDrotVerificationBot" target="_blank" class="btn btn-telegram" style="width: 100%; margin-bottom: 15px;">
-                    <i class="fab fa-telegram"></i> Open Telegram Bot
-                </a>
-            </div>
+            
             <div class="form-footer">
                 <p>Already verified? <a href="#" id="checkVerificationBtn">Check verification status</a></p>
+                <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">
+                    Need help? Contact support @fandrot_support
+                </p>
             </div>
         </div>
     </div>
@@ -1676,6 +1737,13 @@
         const TELEGRAM_BOT_USERNAME = 'FanDrotVerificationBot';
         const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
 
+        // В реальном проекте это должно быть на сервере
+        // Здесь мы имитируем хранение верификационных кодов
+        const telegramVerificationStore = {
+            codes: {}, // userId -> { code, telegramId, timestamp }
+            verifiedUsers: {} // userId -> telegramId
+        };
+
         // State Management
         let currentUser = null;
         let users = JSON.parse(localStorage.getItem('fandrot_users')) || [];
@@ -1689,8 +1757,6 @@
             floodWindow: 10000,
             maxMessages: 3
         };
-        let verificationCode = null;
-        let pendingUser = null;
         let verificationCheckInterval = null;
 
         // Real-time updates
@@ -1757,12 +1823,15 @@
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
         const loginForm = document.getElementById('loginForm');
         const registerForm = document.getElementById('registerForm');
-        const telegramVerificationCode = document.getElementById('telegramVerificationCode');
-        const telegramCodeToSend = document.getElementById('telegramCodeToSend');
+        const telegramUserIdInput = document.getElementById('telegramUserId');
+        const telegramVerificationCodeInput = document.getElementById('telegramVerificationCode');
+        const verifyTelegramIdBtn = document.getElementById('verifyTelegramIdBtn');
+        const verifyCodeBtn = document.getElementById('verifyCodeBtn');
         const telegramVerificationSending = document.getElementById('telegramVerificationSending');
         const telegramVerificationSuccess = document.getElementById('telegramVerificationSuccess');
         const telegramVerificationError = document.getElementById('telegramVerificationError');
-        const telegramVerificationInstructions = document.getElementById('telegramVerificationInstructions');
+        const verificationErrorMsg = document.getElementById('verificationErrorMsg');
+        const verifiedTelegramId = document.getElementById('verifiedTelegramId');
         const checkVerificationBtn = document.getElementById('checkVerificationBtn');
         const connectTelegramBtn = document.getElementById('connectTelegramBtn');
         const disconnectTelegramBtn = document.getElementById('disconnectTelegramBtn');
@@ -1819,6 +1888,7 @@
         const usersList = document.getElementById('usersList');
         
         let messageToDelete = null;
+        let currentVerificationStep = 1;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -1936,8 +2006,7 @@
 
         // Generate verification code
         function generateVerificationCode() {
-            verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-            return verificationCode;
+            return Math.floor(100000 + Math.random() * 900000).toString();
         }
 
         // Send message via Telegram Bot API
@@ -1963,27 +2032,93 @@
             }
         }
 
-        // Get Telegram bot updates (simplified - in production use webhook or long polling)
-        async function checkTelegramVerification(username, code) {
+        // Get Telegram bot updates (упрощенная версия для демо)
+        async function getBotUpdates() {
             try {
-                // This is a simplified check
-                // In production, you would:
-                // 1. Store verification codes in a database
-                // 2. Have a webhook endpoint that receives updates from Telegram
-                // 3. Check if the user sent the correct code to the bot
-                
-                // For demo purposes, we'll simulate verification
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        // Simulate successful verification 80% of the time
-                        const success = Math.random() > 0.2;
-                        resolve(success);
-                    }, 2000);
-                });
+                const response = await fetch(`${TELEGRAM_API_URL}/getUpdates`);
+                const result = await response.json();
+                return result.ok ? result.result : [];
             } catch (error) {
-                console.error('Verification check error:', error);
-                return false;
+                console.error('Error getting bot updates:', error);
+                return [];
             }
+        }
+
+        // Check if Telegram user ID is valid (имитация)
+        async function checkTelegramUserId(userId) {
+            // В реальном проекте здесь должна быть проверка через Telegram API
+            // или сохранение в базе данных
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    // Проверяем формат ID (должен быть числом)
+                    const isValid = /^\d+$/.test(userId) && userId.length >= 5;
+                    resolve(isValid);
+                }, 500);
+            });
+        }
+
+        // Generate and store verification code for user
+        function generateAndStoreVerificationCode(userId, telegramId) {
+            const code = generateVerificationCode();
+            telegramVerificationStore.codes[userId] = {
+                code: code,
+                telegramId: telegramId,
+                timestamp: Date.now(),
+                attempts: 0
+            };
+            
+            // Сохраняем в localStorage для демо
+            localStorage.setItem('fandrot_telegram_codes', JSON.stringify(telegramVerificationStore.codes));
+            
+            return code;
+        }
+
+        // Verify Telegram code
+        async function verifyTelegramCode(userId, code) {
+            const storedData = telegramVerificationStore.codes[userId];
+            
+            if (!storedData) {
+                return { success: false, message: 'No verification request found' };
+            }
+            
+            // Проверяем количество попыток
+            storedData.attempts++;
+            
+            // Проверяем код
+            if (storedData.code === code) {
+                // Код верный
+                telegramVerificationStore.verifiedUsers[userId] = storedData.telegramId;
+                delete telegramVerificationStore.codes[userId];
+                
+                // Сохраняем изменения
+                localStorage.setItem('fandrot_telegram_codes', JSON.stringify(telegramVerificationStore.codes));
+                localStorage.setItem('fandrot_telegram_verified', JSON.stringify(telegramVerificationStore.verifiedUsers));
+                
+                return { 
+                    success: true, 
+                    message: 'Verification successful',
+                    telegramId: storedData.telegramId
+                };
+            } else {
+                // Неверный код
+                if (storedData.attempts >= 3) {
+                    delete telegramVerificationStore.codes[userId];
+                    localStorage.setItem('fandrot_telegram_codes', JSON.stringify(telegramVerificationStore.codes));
+                    return { 
+                        success: false, 
+                        message: 'Too many failed attempts. Please start over.' 
+                    };
+                }
+                return { 
+                    success: false, 
+                    message: `Invalid code. ${3 - storedData.attempts} attempts remaining.` 
+                };
+            }
+        }
+
+        // Check if user is verified
+        function isUserTelegramVerified(userId) {
+            return !!telegramVerificationStore.verifiedUsers[userId];
         }
 
         // Setup all button listeners
@@ -2067,6 +2202,27 @@
                 e.preventDefault();
                 await checkVerificationStatus();
             });
+            
+            // Telegram verification steps
+            verifyTelegramIdBtn.addEventListener('click', async () => {
+                await verifyTelegramUserId();
+            });
+            
+            verifyCodeBtn.addEventListener('click', async () => {
+                await verifyTelegramCodeInput();
+            });
+            
+            telegramUserIdInput.addEventListener('keypress', async (e) => {
+                if (e.key === 'Enter') {
+                    await verifyTelegramUserId();
+                }
+            });
+            
+            telegramVerificationCodeInput.addEventListener('keypress', async (e) => {
+                if (e.key === 'Enter') {
+                    await verifyTelegramCodeInput();
+                }
+            });
         }
 
         // Show/hide modal
@@ -2077,6 +2233,11 @@
                 registerModal.classList.add('active');
             } else if (modal === 'telegram') {
                 telegramModal.classList.add('active');
+                // Сброс полей
+                telegramUserIdInput.value = '';
+                telegramVerificationCodeInput.value = '';
+                document.getElementById('telegramVerificationSteps').style.display = 'block';
+                document.getElementById('telegramVerificationStatus').style.display = 'none';
             } else if (modal === 'delete') {
                 deleteModal.classList.add('active');
             }
@@ -2096,11 +2257,6 @@
                     clearInterval(verificationCheckInterval);
                     verificationCheckInterval = null;
                 }
-                // Reset status displays
-                telegramVerificationSending.style.display = 'none';
-                telegramVerificationSuccess.style.display = 'none';
-                telegramVerificationError.style.display = 'none';
-                telegramVerificationInstructions.style.display = 'block';
             } else if (modal === 'delete') {
                 deleteModal.classList.remove('active');
                 messageToDelete = null;
@@ -2119,8 +2275,9 @@
                 // Check if Telegram is verified (for regular users)
                 if (!user.telegramVerified && user.role !== 'admin' && user.role !== 'moderator') {
                     showNotification('Telegram not verified', 'Please verify your Telegram account first.', 'warning');
-                    pendingUser = user;
-                    startTelegramVerification();
+                    currentUser = user;
+                    localStorage.setItem('fandrot_currentUser', JSON.stringify(user));
+                    showModal('telegram');
                     return;
                 }
                 
@@ -2180,137 +2337,136 @@
                 telegramId: null
             };
             
-            pendingUser = newUser;
-            
             // Add user to database
             users.push(newUser);
             localStorage.setItem('fandrot_users', JSON.stringify(users));
             
-            // Show success and start Telegram verification
+            // Set as current user and show Telegram verification
+            currentUser = newUser;
+            localStorage.setItem('fandrot_currentUser', JSON.stringify(newUser));
+            
             hideModal('register');
             showNotification('Registration successful', 'Please verify your Telegram account to continue.');
-            startTelegramVerification();
+            showModal('telegram');
         }
 
         // Start Telegram verification process
-        async function startTelegramVerification() {
-            // Determine which user to verify
-            const userToVerify = pendingUser || currentUser;
-            if (!userToVerify) {
-                showNotification('Error', 'No user found for verification', 'error');
+        function startTelegramVerification() {
+            if (!currentUser) {
+                showNotification('Error', 'Please log in first', 'error');
+                showModal('login');
                 return;
             }
             
-            // Generate verification code
-            const code = generateVerificationCode();
-            
-            // Store verification code with user
-            userToVerify.verificationCode = code;
-            userToVerify.verificationAttempts = 0;
-            
-            // Show modal
             showModal('telegram');
+        }
+
+        // Verify Telegram User ID
+        async function verifyTelegramUserId() {
+            const telegramId = telegramUserIdInput.value.trim();
             
-            // Show sending status
+            if (!telegramId) {
+                showNotification('Error', 'Please enter your Telegram User ID', 'error');
+                return;
+            }
+            
+            // Validate Telegram ID
+            const isValid = await checkTelegramUserId(telegramId);
+            
+            if (!isValid) {
+                showNotification('Error', 'Invalid Telegram User ID format', 'error');
+                return;
+            }
+            
+            // Generate and store verification code
+            const code = generateAndStoreVerificationCode(currentUser.id, telegramId);
+            
+            // Show success and move to next step
+            showNotification('User ID verified', 'Now get your verification code from the bot');
+            
+            // Focus on code input
+            telegramVerificationCodeInput.focus();
+            
+            // Simulate sending code via Telegram (в реальном проекте это должно быть через бота)
+            showNotification('Code sent', `Verification code ${code} has been generated`);
+        }
+
+        // Verify Telegram code input
+        async function verifyTelegramCodeInput() {
+            const code = telegramVerificationCodeInput.value.trim();
+            
+            if (!code) {
+                showNotification('Error', 'Please enter verification code', 'error');
+                return;
+            }
+            
+            // Show verification status
+            document.getElementById('telegramVerificationSteps').style.display = 'none';
+            document.getElementById('telegramVerificationStatus').style.display = 'block';
             telegramVerificationSending.style.display = 'block';
             telegramVerificationSuccess.style.display = 'none';
             telegramVerificationError.style.display = 'none';
             
-            // Simulate API call delay
-            setTimeout(() => {
-                telegramVerificationSending.style.display = 'none';
-                telegramVerificationSuccess.style.display = 'block';
-                
-                // Display verification code
-                telegramVerificationCode.textContent = code;
-                telegramCodeToSend.textContent = code;
-                
-                // Start checking for verification
-                startVerificationChecking(userToVerify, code);
-            }, 1000);
-        }
-
-        // Start checking for verification completion
-        function startVerificationChecking(user, code) {
-            let attempts = 0;
-            const maxAttempts = 60; // Check for 5 minutes (60 * 5 seconds)
+            // Verify code
+            const verificationResult = await verifyTelegramCode(currentUser.id, code);
             
-            verificationCheckInterval = setInterval(async () => {
-                attempts++;
+            telegramVerificationSending.style.display = 'none';
+            
+            if (verificationResult.success) {
+                // Success!
+                telegramVerificationSuccess.style.display = 'block';
+                verifiedTelegramId.textContent = verificationResult.telegramId;
                 
-                // Simulate verification check
-                const verified = await checkTelegramVerification(user.username, code);
+                // Update user
+                currentUser.telegramVerified = true;
+                currentUser.telegramId = verificationResult.telegramId;
+                currentUser.telegramUsername = `user_${currentUser.username}`;
                 
-                if (verified) {
-                    // Verification successful
-                    clearInterval(verificationCheckInterval);
-                    
-                    // Update user
-                    user.telegramVerified = true;
-                    user.telegramUsername = `user_${user.username}`; // Simulated Telegram username
-                    user.telegramId = generateId();
-                    
-                    // Remove verification data
-                    delete user.verificationCode;
-                    delete user.verificationAttempts;
-                    
-                    // Update storage
-                    const userIndex = users.findIndex(u => u.id === user.id);
-                    if (userIndex !== -1) {
-                        users[userIndex] = user;
-                    }
-                    
-                    localStorage.setItem('fandrot_users', JSON.stringify(users));
-                    
-                    // If this is the current user, update UI
-                    if (currentUser && currentUser.id === user.id) {
-                        currentUser = user;
-                        localStorage.setItem('fandrot_currentUser', JSON.stringify(currentUser));
-                        updateTelegramUI();
-                    }
-                    
-                    // If this is a pending user (new registration), log them in
-                    if (pendingUser && pendingUser.id === user.id) {
-                        currentUser = user;
-                        localStorage.setItem('fandrot_currentUser', JSON.stringify(currentUser));
-                        pendingUser = null;
-                        updateUIForUser();
-                        hideModal('telegram');
-                        showSection('forum');
-                        showNotification('Telegram verified!', 'Welcome to FanDrot community');
-                    } else {
-                        // Update UI and show success
-                        updateTelegramUI();
-                        showNotification('Telegram verified', 'Your Telegram account has been successfully verified.');
-                    }
-                } else if (attempts >= maxAttempts) {
-                    // Timeout
-                    clearInterval(verificationCheckInterval);
-                    telegramVerificationError.style.display = 'block';
-                    telegramVerificationSuccess.style.display = 'none';
-                    showNotification('Verification timeout', 'Please try the verification process again.', 'error');
+                // Update storage
+                const userIndex = users.findIndex(u => u.id === currentUser.id);
+                if (userIndex !== -1) {
+                    users[userIndex] = currentUser;
                 }
-            }, 5000); // Check every 5 seconds
+                
+                localStorage.setItem('fandrot_users', JSON.stringify(users));
+                localStorage.setItem('fandrot_currentUser', JSON.stringify(currentUser));
+                
+                // Update UI
+                updateTelegramUI();
+                
+                // Close modal after delay
+                setTimeout(() => {
+                    hideModal('telegram');
+                    showNotification('Telegram verified!', 'Your account is now fully activated');
+                    showSection('forum');
+                }, 2000);
+            } else {
+                // Error
+                telegramVerificationError.style.display = 'block';
+                verificationErrorMsg.textContent = verificationResult.message;
+                
+                // Show steps again
+                setTimeout(() => {
+                    document.getElementById('telegramVerificationSteps').style.display = 'block';
+                    document.getElementById('telegramVerificationStatus').style.display = 'none';
+                }, 3000);
+            }
         }
 
-        // Check verification status manually
+        // Check verification status
         async function checkVerificationStatus() {
-            const userToCheck = pendingUser || currentUser;
-            if (!userToCheck || !userToCheck.verificationCode) {
-                showNotification('No verification in progress', 'Start the verification process first.', 'warning');
+            if (!currentUser) {
+                showNotification('Error', 'Please log in first', 'error');
                 return;
             }
             
-            showNotification('Checking...', 'Checking Telegram verification status...', 'info');
+            const isVerified = isUserTelegramVerified(currentUser.id);
             
-            const verified = await checkTelegramVerification(userToCheck.username, userToCheck.verificationCode);
-            
-            if (verified) {
-                showNotification('Verified!', 'Your Telegram account has been verified successfully!', 'success');
-                // Reload page or update UI
-                location.reload();
+            if (isVerified) {
+                showNotification('Already verified', 'Your Telegram account is already verified', 'success');
+                updateTelegramUI();
             } else {
-                showNotification('Not verified yet', 'Please complete the verification process in Telegram.', 'warning');
+                showNotification('Not verified', 'Please complete the verification process', 'warning');
             }
         }
 
@@ -2322,6 +2478,10 @@
                 currentUser.telegramVerified = false;
                 currentUser.telegramUsername = null;
                 currentUser.telegramId = null;
+                
+                // Remove from verified users
+                delete telegramVerificationStore.verifiedUsers[currentUser.id];
+                localStorage.setItem('fandrot_telegram_verified', JSON.stringify(telegramVerificationStore.verifiedUsers));
                 
                 localStorage.setItem('fandrot_currentUser', JSON.stringify(currentUser));
                 updateUsersStorage();
