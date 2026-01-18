@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Основные стили */
+        /* Все стили остаются такими же, как в оригинале */
         :root {
             --primary: #0099ff;
             --primary-dark: #007acc;
@@ -316,6 +316,11 @@
         .btn-warning {
             background: var(--warning);
             color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e68a00;
+            transform: translateY(-3px);
         }
 
         /* Main Content */
@@ -1069,7 +1074,7 @@
             box-shadow: var(--shadow);
         }
 
-        /* Tabs for forum */
+        /* Forum Tabs */
         .tabs {
             display: flex;
             gap: 10px;
@@ -1078,7 +1083,7 @@
         }
 
         .tab {
-            padding: 12px 24px;
+            padding: 12px 20px;
             background: rgba(255, 255, 255, 0.07);
             border: 1px solid var(--glass-border);
             border-radius: 10px;
@@ -1087,10 +1092,8 @@
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             transition: all 0.3s;
-            border: none;
-            font-family: 'Poppins', sans-serif;
         }
 
         .tab:hover {
@@ -1104,10 +1107,16 @@
             box-shadow: 0 4px 15px rgba(0, 153, 255, 0.3);
         }
 
+        /* Forum Container */
         .forum-container {
             display: grid;
             gap: 30px;
-            grid-template-columns: 280px 1fr;
+        }
+
+        @media (min-width: 992px) {
+            .forum-container {
+                grid-template-columns: 280px 1fr;
+            }
         }
 
         .chat-sidebar {
@@ -1119,7 +1128,7 @@
 
         .chat-sidebar h3 {
             font-family: 'Montserrat', sans-serif;
-            font-size: 18px;
+            font-size: 20px;
             margin-bottom: 20px;
             color: var(--text-light);
             display: flex;
@@ -1127,50 +1136,36 @@
             gap: 10px;
         }
 
-        .rules-list {
-            margin-bottom: 30px;
-        }
-
         .rules-list p {
-            margin-bottom: 10px;
-            font-size: 14px;
-            color: var(--gray);
             display: flex;
             align-items: center;
             gap: 10px;
+            margin-bottom: 12px;
+            color: var(--gray);
+            font-size: 14px;
         }
 
         .anti-spam-info {
             margin-top: 30px;
         }
 
-        .anti-spam-info h4 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 16px;
-            margin-bottom: 15px;
-            color: var(--text-light);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
         .chat-main {
             display: flex;
             flex-direction: column;
+            gap: 20px;
         }
 
         .messages-container {
-            flex: 1;
-            min-height: 500px;
-            max-height: 600px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 20px;
+            padding: 25px;
             border: 1px solid var(--glass-border);
+            max-height: 500px;
+            overflow-y: auto;
+            min-height: 300px;
         }
 
+        /* Message Form */
         .message-form {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 20px;
@@ -1180,7 +1175,7 @@
 
         .message-input {
             width: 100%;
-            padding: 15px;
+            padding: 14px;
             background: rgba(255, 255, 255, 0.07);
             border: 2px solid var(--glass-border);
             border-radius: 12px;
@@ -1190,6 +1185,7 @@
             transition: all 0.3s;
             min-height: 100px;
             resize: vertical;
+            line-height: 1.6;
         }
 
         .message-input:focus {
@@ -1200,15 +1196,20 @@
         }
 
         .spam-warning {
-            display: none;
-            background: rgba(255, 149, 0, 0.2);
-            color: var(--warning);
-            padding: 10px;
-            border-radius: 8px;
+            background: rgba(255, 149, 0, 0.1);
+            border: 1px solid var(--warning);
+            border-radius: 10px;
+            padding: 10px 15px;
             margin-top: 10px;
-            font-size: 13px;
+            display: none;
             align-items: center;
             gap: 10px;
+            color: var(--warning);
+            font-size: 14px;
+        }
+
+        .spam-warning.active {
+            display: flex;
         }
 
         .form-actions {
@@ -1216,6 +1217,8 @@
             justify-content: space-between;
             align-items: center;
             margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .file-upload {
@@ -1225,16 +1228,16 @@
         }
 
         .file-label {
-            padding: 10px 16px;
+            padding: 8px 15px;
             background: rgba(255, 255, 255, 0.07);
             border: 1px solid var(--glass-border);
             border-radius: 8px;
             color: var(--text-light);
-            font-size: 13px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 13px;
             transition: all 0.3s;
         }
 
@@ -1248,20 +1251,20 @@
         }
 
         .stickers-container {
-            display: none;
             position: absolute;
-            bottom: 60px;
+            bottom: 50px;
+            left: 0;
             background: var(--dark);
             border: 1px solid var(--glass-border);
             border-radius: 15px;
             padding: 15px;
             width: 300px;
-            max-height: 200px;
+            max-height: 300px;
             overflow-y: auto;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
+            display: none;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
             z-index: 100;
-            box-shadow: var(--shadow);
         }
 
         .stickers-container.active {
@@ -1269,14 +1272,13 @@
         }
 
         .sticker-btn {
+            font-size: 24px;
+            padding: 8px;
             background: transparent;
             border: none;
             cursor: pointer;
-            padding: 8px;
             border-radius: 8px;
             transition: all 0.3s;
-            font-size: 24px;
-            text-align: center;
         }
 
         .sticker-btn:hover {
@@ -1433,10 +1435,10 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background: transparent;
+            background: none;
             border: none;
             color: var(--text-light);
-            font-size: 24px;
+            font-size: 28px;
             cursor: pointer;
             width: 40px;
             height: 40px;
@@ -1448,7 +1450,8 @@
         }
 
         .close-modal:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 71, 87, 0.1);
+            color: var(--danger);
             transform: rotate(90deg);
         }
 
@@ -1463,16 +1466,15 @@
             color: var(--text-light);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .modal-header p {
             color: var(--gray);
-            font-size: 15px;
         }
 
         .form-footer {
-            margin-top: 20px;
+            margin-top: 25px;
             text-align: center;
             color: var(--gray);
             font-size: 14px;
@@ -1481,7 +1483,7 @@
         .form-footer a {
             color: var(--primary);
             text-decoration: none;
-            transition: all 0.3s;
+            font-weight: 500;
         }
 
         .form-footer a:hover {
@@ -1496,6 +1498,7 @@
             right: 20px;
             width: 400px;
             max-width: 90vw;
+            height: 500px;
             background: var(--dark);
             border-radius: 20px;
             overflow: hidden;
@@ -1516,23 +1519,18 @@
         }
 
         .private-chat-header {
-            background: var(--primary);
-            padding: 20px;
+            background: rgba(26, 26, 46, 0.9);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--glass-border);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .private-chat-header strong {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 18px;
-            color: white;
-        }
-
         .chat-minimize {
-            background: transparent;
+            background: none;
             border: none;
-            color: white;
+            color: var(--text-light);
             font-size: 18px;
             cursor: pointer;
             width: 30px;
@@ -1545,19 +1543,28 @@
         }
 
         .chat-minimize:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .private-chat-messages {
             flex: 1;
-            max-height: 400px;
-            overflow-y: auto;
             padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
 
         .private-chat-input {
-            padding: 20px;
+            padding: 15px;
             border-top: 1px solid var(--glass-border);
+            background: rgba(26, 26, 46, 0.9);
+        }
+
+        .private-chat-input .form-actions {
+            display: flex;
+            gap: 10px;
+            margin: 0;
         }
 
         /* Admin Panel */
@@ -1648,22 +1655,23 @@
             font-family: 'Montserrat', sans-serif;
             font-size: 18px;
             margin-bottom: 5px;
+            color: var(--text-light);
         }
 
         .user-info p {
             color: var(--gray);
-            font-size: 13px;
+            font-size: 14px;
         }
 
         .user-details {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 20px;
+            margin-top: 15px;
         }
 
         .user-actions {
             display: flex;
             gap: 10px;
             margin-top: 15px;
+            flex-wrap: wrap;
         }
 
         /* Notification */
@@ -1683,22 +1691,6 @@
             z-index: 10000;
             animation: slideInRight 0.3s ease;
             border: 1px solid var(--glass-border);
-        }
-
-        .notification-icon {
-            font-size: 24px;
-        }
-
-        .notification-content h4 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 16px;
-            margin-bottom: 5px;
-            color: var(--text-light);
-        }
-
-        .notification-content p {
-            color: var(--gray);
-            font-size: 14px;
         }
 
         /* Hidden class */
@@ -1768,10 +1760,6 @@
             .users-list {
                 grid-template-columns: 1fr;
             }
-            
-            .forum-container {
-                grid-template-columns: 1fr;
-            }
         }
 
         @media (max-width: 768px) {
@@ -1809,16 +1797,6 @@
                 width: 95vw;
                 right: 2.5vw;
             }
-            
-            .form-actions {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .file-upload {
-                width: 100%;
-                justify-content: space-between;
-            }
         }
 
         @media (max-width: 480px) {
@@ -1849,10 +1827,6 @@
             
             .modal-content {
                 padding: 25px;
-            }
-            
-            .users-list {
-                grid-template-columns: 1fr;
             }
         }
 
@@ -2145,7 +2119,7 @@
     <!-- Header -->
     <header>
         <div class="container nav-container">
-            <a href="#" class="logo">
+            <a href="#" class="logo" id="homeLogo">
                 <i class="fas fa-shield-alt logo-icon"></i>
                 <span class="logo-text">FanDrot</span>
             </a>
@@ -2164,7 +2138,7 @@
                 <a href="#" class="nav-link" data-section="profile">
                     <i class="fas fa-user"></i> Profile
                 </a>
-                <a href="#" class="nav-link" id="adminPanelLink" style="display: none;">
+                <a href="#" class="nav-link" id="adminPanelLink" data-section="adminPanel" style="display: none;">
                     <i class="fas fa-crown"></i> Admin
                 </a>
             </div>
@@ -2403,7 +2377,7 @@
                     </button>
                 </div>
                 
-                <div class="forum-container">
+                <div class="forum-container" id="forumContainer">
                     <div class="chat-sidebar">
                         <h3><i class="fas fa-gavel"></i> Community Rules</h3>
                         <div class="rules-list">
@@ -2496,7 +2470,9 @@
             </div>
             
             <div class="admin-section">
-                <h2><i class="fas fa-users-cog"></i> User Management</h2>
+                <h2 style="font-family: 'Montserrat', sans-serif; font-size: 28px; margin-bottom: 30px; color: var(--text-light);">
+                    <i class="fas fa-users-cog"></i> User Management
+                </h2>
                 <div class="users-list" id="usersList">
                     <!-- Users will be loaded here -->
                 </div>
@@ -2687,7 +2663,7 @@
         let activePrivateChat = null;
         let unreadPrivateMessages = {};
         let viewingUserProfile = null;
-        let currentForumTab = 'general';
+        let lastMessageTime = 0;
 
         // Default users
         const DEFAULT_USERS = [
@@ -2791,8 +2767,9 @@
             initializeStickers();
             initializeEmojis();
             
-            // Load initial forum messages
-            loadMessages(currentForumTab);
+            // Load forum messages
+            loadMessages();
+            updateActiveUsers();
             
             // Show welcome message
             setTimeout(() => {
@@ -2882,6 +2859,13 @@
                 showNotification('Demo', 'Check out our features and how FanDrot protects your privacy.', 'info');
             });
             
+            // Logo click
+            document.getElementById('homeLogo').addEventListener('click', (e) => {
+                e.preventDefault();
+                showSection('home');
+                updateNavActive('home');
+            });
+            
             // Profile actions
             document.getElementById('avatarUploadBtn').addEventListener('click', () => document.getElementById('avatarInput').click());
             document.getElementById('avatarInput').addEventListener('change', handleAvatarUpload);
@@ -2910,12 +2894,9 @@
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.addEventListener('click', function() {
                     const tabName = this.dataset.tab;
-                    if (tabName) {
-                        currentForumTab = tabName;
-                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                        this.classList.add('active');
-                        loadMessages(tabName);
-                    }
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    loadMessages(tabName);
                 });
             });
             
@@ -2926,6 +2907,7 @@
                     return;
                 }
                 document.getElementById('messageInput').focus();
+                showNotification('New Topic', 'Start typing your message below to create a new topic.', 'info');
             });
             
             // Close modals
@@ -2936,6 +2918,11 @@
                         modal.classList.remove('active');
                     }
                 });
+            });
+            
+            // Close user profile modal
+            document.getElementById('closeUserProfileModal').addEventListener('click', () => {
+                document.getElementById('userProfileModal').classList.remove('active');
             });
             
             // Switch between login/register
@@ -2992,9 +2979,12 @@
                 document.getElementById('privateChatContainer').classList.remove('active');
             });
             
-            // Close user profile modal
-            document.getElementById('closeUserProfileModal').addEventListener('click', () => {
-                document.getElementById('userProfileModal').classList.remove('active');
+            // Message input Enter key
+            document.getElementById('messageInput').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    document.getElementById('sendBtn').click();
+                }
             });
         }
 
@@ -3012,13 +3002,11 @@
         }
 
         function updateNavActive(section) {
-            document.querySelectorAll('.nav-link').forEach(link => {
-                if (link.dataset.section === section) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
-                }
-            });
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            const activeLink = document.querySelector(`.nav-link[data-section="${section}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
         }
 
         function showSection(section) {
@@ -3046,7 +3034,7 @@
                 }
             } else if (section === 'forum') {
                 document.getElementById('forum').classList.add('active');
-                loadMessages(currentForumTab);
+                loadMessages();
                 updateActiveUsers();
             } else if (section === 'adminPanel') {
                 if (currentUser && currentUser.role === 'admin') {
@@ -3085,6 +3073,7 @@
                 
                 updateUIForUser();
                 document.getElementById('loginModal').classList.remove('active');
+                document.getElementById('loginForm').reset();
                 showSection('forum');
                 loadFriendsList();
                 
@@ -3149,6 +3138,7 @@
             
             updateUIForUser();
             document.getElementById('registerModal').classList.remove('active');
+            document.getElementById('registerForm').reset();
             showSection('forum');
             loadFriendsList();
             
@@ -3169,10 +3159,11 @@
             btn.innerHTML = `<i class="fas fa-circle"></i> ${nextStatus.charAt(0).toUpperCase() + nextStatus.slice(1)}`;
             
             // Update status indicator
-            const statusIndicator = document.querySelector('#profile .status-indicator');
+            const statusIndicator = document.querySelector('.status-indicator');
             statusIndicator.className = 'status-indicator';
             statusIndicator.classList.add(nextStatus);
             
+            // Update status text
             document.getElementById('userStatus').textContent = nextStatus.charAt(0).toUpperCase() + nextStatus.slice(1);
             
             showNotification('Status Updated', `You are now ${nextStatus}.`, 'info');
@@ -3204,16 +3195,10 @@
             `;
             
             // Show/hide admin panel link
-            const adminLink = document.getElementById('adminPanelLink');
             if (currentUser.role === 'admin') {
-                adminLink.style.display = 'flex';
-                adminLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    showSection('adminPanel');
-                    updateNavActive('adminPanel');
-                });
+                document.getElementById('adminPanelLink').style.display = 'flex';
             } else {
-                adminLink.style.display = 'none';
+                document.getElementById('adminPanelLink').style.display = 'none';
             }
             
             // Add new button listeners
@@ -3228,7 +3213,7 @@
             if (currentUser.role === 'admin') {
                 document.getElementById('adminNavBtn').addEventListener('click', () => {
                     showSection('adminPanel');
-                    updateNavActive('adminPanel');
+                    loadAdminPanel();
                 });
             }
             document.getElementById('logoutBtn').addEventListener('click', logout);
@@ -3236,6 +3221,11 @@
             // Update status button
             const statusBtn = document.getElementById('changeStatusBtn');
             statusBtn.innerHTML = `<i class="fas fa-circle"></i> ${currentUser.status.charAt(0).toUpperCase() + currentUser.status.slice(1)}`;
+            
+            // Update status indicator
+            const statusIndicator = document.querySelector('.status-indicator');
+            statusIndicator.className = 'status-indicator';
+            statusIndicator.classList.add(currentUser.status);
         }
 
         function loadProfileData() {
@@ -3254,6 +3244,14 @@
             if (currentUser.banner) {
                 document.getElementById('profileBanner').style.backgroundImage = `url('${currentUser.banner}')`;
                 document.getElementById('bannerPreview').innerHTML = `<img src="${currentUser.banner}" alt="Banner">`;
+            } else {
+                document.getElementById('profileBanner').style.backgroundImage = '';
+                document.getElementById('bannerPreview').innerHTML = `
+                    <div class="upload-text">
+                        <i class="fas fa-image" style="font-size: 24px; margin-bottom: 10px;"></i>
+                        <p>Click to upload banner</p>
+                    </div>
+                `;
             }
             
             // Stats
@@ -3436,18 +3434,13 @@
             // Hide admin panel link
             document.getElementById('adminPanelLink').style.display = 'none';
             
+            // Reset nav active state
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelector('.nav-link[data-section="home"]').classList.add('active');
+            
             // Reattach listeners
             document.getElementById('loginBtn').addEventListener('click', () => showModal('login'));
             document.getElementById('registerBtn').addEventListener('click', () => showModal('register'));
-            
-            // Reset nav active state
-            document.querySelectorAll('.nav-link').forEach(link => {
-                if (link.dataset.section === 'home') {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
-                }
-            });
             
             showSection('home');
             showNotification('Logged Out', 'You have been securely logged out.', 'info');
@@ -3623,10 +3616,13 @@
                     const adminActions = document.createElement('div');
                     adminActions.style.marginTop = '15px';
                     adminActions.innerHTML = `
-                        <button class="btn btn-warning btn-small" id="modalBanBtn">
-                            <i class="fas fa-ban"></i> ${user.isBanned ? 'Unban' : 'Ban'}
+                        <button class="btn ${user.isBanned ? 'btn-success' : 'btn-danger'} btn-small" id="modalBanBtn">
+                            <i class="fas ${user.isBanned ? 'fa-unlock' : 'fa-ban'}"></i> ${user.isBanned ? 'Unban' : 'Ban'}
                         </button>
-                        <button class="btn btn-danger btn-small" id="modalDeleteBtn">
+                        <button class="btn btn-warning btn-small" id="modalDeleteBtn">
+                            <i class="fas fa-user-cog"></i> Role
+                        </button>
+                        <button class="btn btn-danger btn-small" id="modalDeleteUserBtn" ${user.role === 'admin' ? 'disabled' : ''}>
                             <i class="fas fa-trash"></i> Delete
                         </button>
                     `;
@@ -3639,6 +3635,11 @@
                     });
                     
                     document.getElementById('modalDeleteBtn').addEventListener('click', () => {
+                        changeUserRole(user.id);
+                        modal.classList.remove('active');
+                    });
+                    
+                    document.getElementById('modalDeleteUserBtn').addEventListener('click', () => {
                         if (confirm(`Delete user ${user.username}? This action cannot be undone.`)) {
                             deleteUser(user.id);
                             modal.classList.remove('active');
@@ -3803,11 +3804,6 @@
             // Clear unread count
             delete unreadPrivateMessages[friend.id];
             updateNotificationBadge();
-            
-            // Focus on input
-            setTimeout(() => {
-                document.getElementById('privateMessageInput').focus();
-            }, 100);
         }
 
         function loadPrivateMessages(friendId) {
@@ -4091,6 +4087,13 @@
                 return;
             }
             
+            // Spam protection
+            const now = Date.now();
+            if (now - lastMessageTime < 3000) { // 3 seconds cooldown
+                showNotification('Slow Down', 'Please wait a moment before sending another message.', 'warning');
+                return;
+            }
+            
             const input = document.getElementById('messageInput');
             const text = input.value.trim();
             
@@ -4098,6 +4101,10 @@
                 showNotification('Empty Message', 'Please enter a message.', 'warning');
                 return;
             }
+            
+            // Get active tab
+            const activeTab = document.querySelector('.tab.active');
+            const tab = activeTab ? activeTab.dataset.tab : 'general';
             
             const message = {
                 id: generateId(),
@@ -4107,7 +4114,7 @@
                 avatar: currentUser.avatar,
                 text: text,
                 timestamp: new Date().toISOString(),
-                tab: currentForumTab,
+                tab: tab,
                 deleted: false
             };
             
@@ -4118,6 +4125,7 @@
             currentUser.posts = (currentUser.posts || 0) + 1;
             updateCurrentUser();
             
+            lastMessageTime = now;
             input.value = '';
             addForumMessageToUI(message, true);
             document.getElementById('messagesContainer').scrollTop = document.getElementById('messagesContainer').scrollHeight;
@@ -4136,6 +4144,17 @@
                 return;
             }
             
+            // Spam protection
+            const now = Date.now();
+            if (now - lastMessageTime < 3000) {
+                showNotification('Slow Down', 'Please wait a moment before sending another message.', 'warning');
+                return;
+            }
+            
+            // Get active tab
+            const activeTab = document.querySelector('.tab.active');
+            const tab = activeTab ? activeTab.dataset.tab : 'general';
+            
             const message = {
                 id: generateId(),
                 userId: currentUser.id,
@@ -4144,7 +4163,7 @@
                 avatar: currentUser.avatar,
                 sticker: sticker,
                 timestamp: new Date().toISOString(),
-                tab: currentForumTab,
+                tab: tab,
                 deleted: false
             };
             
@@ -4155,6 +4174,7 @@
             currentUser.posts = (currentUser.posts || 0) + 1;
             updateCurrentUser();
             
+            lastMessageTime = now;
             addForumMessageToUI(message, true);
             document.getElementById('messagesContainer').scrollTop = document.getElementById('messagesContainer').scrollHeight;
             
@@ -4171,7 +4191,11 @@
             
             localStorage.setItem('fandrot_messages', JSON.stringify(messages));
             
-            loadMessages(currentForumTab);
+            // Get active tab
+            const activeTab = document.querySelector('.tab.active');
+            const tab = activeTab ? activeTab.dataset.tab : 'general';
+            loadMessages(tab);
+            
             showNotification('Message Deleted', 'The message has been removed.', 'info');
         }
 
