@@ -1069,6 +1069,221 @@
             box-shadow: var(--shadow);
         }
 
+        /* Tabs for forum */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text-light);
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            border: none;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+        }
+
+        .tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(0, 153, 255, 0.3);
+        }
+
+        .forum-container {
+            display: grid;
+            gap: 30px;
+            grid-template-columns: 280px 1fr;
+        }
+
+        .chat-sidebar {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .chat-sidebar h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rules-list {
+            margin-bottom: 30px;
+        }
+
+        .rules-list p {
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .anti-spam-info {
+            margin-top: 30px;
+        }
+
+        .anti-spam-info h4 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-main {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .messages-container {
+            flex: 1;
+            min-height: 500px;
+            max-height: 600px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .message-form {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .message-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 2px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-light);
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            transition: all 0.3s;
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 4px rgba(0, 153, 255, 0.2);
+        }
+
+        .spam-warning {
+            display: none;
+            background: rgba(255, 149, 0, 0.2);
+            color: var(--warning);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 13px;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .file-upload {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .file-label {
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .file-label:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .stickers-container {
+            display: none;
+            position: absolute;
+            bottom: 60px;
+            background: var(--dark);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 15px;
+            width: 300px;
+            max-height: 200px;
+            overflow-y: auto;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .stickers-container.active {
+            display: grid;
+        }
+
+        .sticker-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .sticker-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.2);
+        }
+
         /* Message Cards */
         .message {
             background: rgba(255, 255, 255, 0.05);
@@ -1214,6 +1429,65 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            font-size: 24px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
+        }
+
+        .modal-header {
+            margin-bottom: 30px;
+        }
+
+        .modal-header h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal-header p {
+            color: var(--gray);
+            font-size: 15px;
+        }
+
+        .form-footer {
+            margin-top: 20px;
+            text-align: center;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .form-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
         /* Private Chat Window */
         .private-chat-container {
             display: none;
@@ -1228,17 +1502,62 @@
             border: 1px solid var(--glass-border);
             box-shadow: var(--shadow);
             z-index: 1000;
+            flex-direction: column;
         }
 
         .private-chat-container.active {
             display: flex;
-            flex-direction: column;
             animation: slideInRight 0.3s ease;
         }
 
         @keyframes slideInRight {
             from { opacity: 0; transform: translateX(100px); }
             to { opacity: 1; transform: translateX(0); }
+        }
+
+        .private-chat-header {
+            background: var(--primary);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .private-chat-header strong {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            color: white;
+        }
+
+        .chat-minimize {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .chat-minimize:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .private-chat-messages {
+            flex: 1;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .private-chat-input {
+            padding: 20px;
+            border-top: 1px solid var(--glass-border);
         }
 
         /* Admin Panel */
@@ -1311,6 +1630,42 @@
             background: rgba(255, 71, 87, 0.05);
         }
 
+        .user-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+        }
+
+        .user-info h4 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .user-info p {
+            color: var(--gray);
+            font-size: 13px;
+        }
+
+        .user-details {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
         /* Notification */
         .notification {
             position: fixed;
@@ -1328,6 +1683,22 @@
             z-index: 10000;
             animation: slideInRight 0.3s ease;
             border: 1px solid var(--glass-border);
+        }
+
+        .notification-icon {
+            font-size: 24px;
+        }
+
+        .notification-content h4 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: var(--text-light);
+        }
+
+        .notification-content p {
+            color: var(--gray);
+            font-size: 14px;
         }
 
         /* Hidden class */
@@ -1397,6 +1768,10 @@
             .users-list {
                 grid-template-columns: 1fr;
             }
+            
+            .forum-container {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 768px) {
@@ -1434,6 +1809,16 @@
                 width: 95vw;
                 right: 2.5vw;
             }
+            
+            .form-actions {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .file-upload {
+                width: 100%;
+                justify-content: space-between;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1464,6 +1849,10 @@
             
             .modal-content {
                 padding: 25px;
+            }
+            
+            .users-list {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -2014,7 +2403,7 @@
                     </button>
                 </div>
                 
-                <div class="forum-container" style="grid-template-columns: 280px 1fr;">
+                <div class="forum-container">
                     <div class="chat-sidebar">
                         <h3><i class="fas fa-gavel"></i> Community Rules</h3>
                         <div class="rules-list">
@@ -2298,6 +2687,7 @@
         let activePrivateChat = null;
         let unreadPrivateMessages = {};
         let viewingUserProfile = null;
+        let currentForumTab = 'general';
 
         // Default users
         const DEFAULT_USERS = [
@@ -2400,6 +2790,9 @@
             setupAllButtonListeners();
             initializeStickers();
             initializeEmojis();
+            
+            // Load initial forum messages
+            loadMessages(currentForumTab);
             
             // Show welcome message
             setTimeout(() => {
@@ -2513,6 +2906,28 @@
                 document.getElementById('searchResults').classList.add('active');
             });
             
+            // Forum tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.dataset.tab;
+                    if (tabName) {
+                        currentForumTab = tabName;
+                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                        loadMessages(tabName);
+                    }
+                });
+            });
+            
+            // New topic button
+            document.getElementById('newTopicBtn').addEventListener('click', () => {
+                if (!currentUser) {
+                    showModal('login');
+                    return;
+                }
+                document.getElementById('messageInput').focus();
+            });
+            
             // Close modals
             document.querySelectorAll('.close-modal').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -2576,6 +2991,11 @@
             document.getElementById('minimizeChat').addEventListener('click', () => {
                 document.getElementById('privateChatContainer').classList.remove('active');
             });
+            
+            // Close user profile modal
+            document.getElementById('closeUserProfileModal').addEventListener('click', () => {
+                document.getElementById('userProfileModal').classList.remove('active');
+            });
         }
 
         function setupNavigation() {
@@ -2585,10 +3005,19 @@
                     const section = this.dataset.section;
                     if (section) {
                         showSection(section);
-                        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                        this.classList.add('active');
+                        updateNavActive(section);
                     }
                 });
+            });
+        }
+
+        function updateNavActive(section) {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.dataset.section === section) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
             });
         }
 
@@ -2605,7 +3034,7 @@
                     document.getElementById('profile').classList.add('active');
                 } else {
                     showModal('login');
-                    document.getElementById('home').classList.add('active');
+                    showSection('home');
                 }
             } else if (section === 'friends') {
                 if (currentUser) {
@@ -2613,11 +3042,11 @@
                     document.getElementById('friends').classList.add('active');
                 } else {
                     showModal('login');
-                    document.getElementById('home').classList.add('active');
+                    showSection('home');
                 }
             } else if (section === 'forum') {
                 document.getElementById('forum').classList.add('active');
-                loadMessages();
+                loadMessages(currentForumTab);
                 updateActiveUsers();
             } else if (section === 'adminPanel') {
                 if (currentUser && currentUser.role === 'admin') {
@@ -2739,6 +3168,13 @@
             const btn = document.getElementById('changeStatusBtn');
             btn.innerHTML = `<i class="fas fa-circle"></i> ${nextStatus.charAt(0).toUpperCase() + nextStatus.slice(1)}`;
             
+            // Update status indicator
+            const statusIndicator = document.querySelector('#profile .status-indicator');
+            statusIndicator.className = 'status-indicator';
+            statusIndicator.classList.add(nextStatus);
+            
+            document.getElementById('userStatus').textContent = nextStatus.charAt(0).toUpperCase() + nextStatus.slice(1);
+            
             showNotification('Status Updated', `You are now ${nextStatus}.`, 'info');
         }
 
@@ -2768,8 +3204,16 @@
             `;
             
             // Show/hide admin panel link
+            const adminLink = document.getElementById('adminPanelLink');
             if (currentUser.role === 'admin') {
-                document.getElementById('adminPanelLink').style.display = 'block';
+                adminLink.style.display = 'flex';
+                adminLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showSection('adminPanel');
+                    updateNavActive('adminPanel');
+                });
+            } else {
+                adminLink.style.display = 'none';
             }
             
             // Add new button listeners
@@ -2784,7 +3228,7 @@
             if (currentUser.role === 'admin') {
                 document.getElementById('adminNavBtn').addEventListener('click', () => {
                     showSection('adminPanel');
-                    loadAdminPanel();
+                    updateNavActive('adminPanel');
                 });
             }
             document.getElementById('logoutBtn').addEventListener('click', logout);
@@ -2963,7 +3407,7 @@
             const userIndex = users.findIndex(u => u.id === user.id);
             if (userIndex !== -1) {
                 users[userIndex] = user;
-                localStorage.setItem('fandrot_users', JSON.stringify(user));
+                localStorage.setItem('fandrot_users', JSON.stringify(users));
             }
         }
 
@@ -2995,6 +3439,15 @@
             // Reattach listeners
             document.getElementById('loginBtn').addEventListener('click', () => showModal('login'));
             document.getElementById('registerBtn').addEventListener('click', () => showModal('register'));
+            
+            // Reset nav active state
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.dataset.section === 'home') {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
             
             showSection('home');
             showNotification('Logged Out', 'You have been securely logged out.', 'info');
@@ -3350,6 +3803,11 @@
             // Clear unread count
             delete unreadPrivateMessages[friend.id];
             updateNotificationBadge();
+            
+            // Focus on input
+            setTimeout(() => {
+                document.getElementById('privateMessageInput').focus();
+            }, 100);
         }
 
         function loadPrivateMessages(friendId) {
@@ -3649,7 +4107,7 @@
                 avatar: currentUser.avatar,
                 text: text,
                 timestamp: new Date().toISOString(),
-                tab: 'general',
+                tab: currentForumTab,
                 deleted: false
             };
             
@@ -3686,7 +4144,7 @@
                 avatar: currentUser.avatar,
                 sticker: sticker,
                 timestamp: new Date().toISOString(),
-                tab: 'general',
+                tab: currentForumTab,
                 deleted: false
             };
             
@@ -3713,7 +4171,7 @@
             
             localStorage.setItem('fandrot_messages', JSON.stringify(messages));
             
-            loadMessages('general');
+            loadMessages(currentForumTab);
             showNotification('Message Deleted', 'The message has been removed.', 'info');
         }
 
